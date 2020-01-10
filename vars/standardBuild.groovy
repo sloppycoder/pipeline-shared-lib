@@ -50,7 +50,7 @@ pipeline {
               }
             }
             steps {
-                // sh 'echo kubectl -k k8s/overlays/' + deployEnv
+                sh 'echo kubectl -k k8s/overlays/' + deployEnv
                 sh 'echo run bunch of integration test'
                 sh 'echo can also trigger a down stream job for testing'
             }
@@ -61,3 +61,7 @@ pipeline {
 
 
 }
+
+
+@groovy.transform.Field
+def deployEnv = 'aaa'
