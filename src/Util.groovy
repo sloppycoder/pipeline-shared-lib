@@ -10,9 +10,11 @@ class Util implements Serializable {
   		  return 'dev'
   	 } else if (branch.startsWith('release/')) {
   		  return 'sit'
+  	 } else if (branch.startsWith('master')) {
+  		  return 'prd'
   	 } else {
-  		  return 'any'
-  	 }
+        return 'non'
+     }
   }
 
 }
