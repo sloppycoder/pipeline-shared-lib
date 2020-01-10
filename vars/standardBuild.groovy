@@ -20,14 +20,15 @@ pipeline {
             }
         }
 
-        stage('code quality and security scan') {
+        stage('code scan') {
             when{
               expression { 
                 return env.GIT_BRANCH.startsWith('release/') || doScan
               }
             }
             steps {
-                sh 'echo sonar scan 2'
+                sh 'echo sonar scan'
+                sh 'echo burpsuite scan'
             }
         }
         
@@ -45,7 +46,7 @@ pipeline {
             }
         }
 
-        stage('deploy and test') {
+        stage('deploy') {
             when{
               expression { 
                 return env.GIT_BRANCH == 'develop' || doDeploy
@@ -53,8 +54,18 @@ pipeline {
             }
             steps {
                 sh 'echo kubectl -k k8s/overlays/' + Util.envForBranch(env.GIT_BRANCH)
-                sh 'echo run bunch of integration test'
-                sh 'echo can also trigger a down stream job for testing'
+            }
+        }
+
+        stage('integration test') {
+            when{
+              expression { 
+                return env.GIT_BRANCH == 'develop' || doDeploy
+              }
+            }
+            steps {
+                sh 'echo run bunch of integration tests'
+                sh 'echo or trigger a down stream integration test job'
             }
         }
        
