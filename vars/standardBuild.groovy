@@ -3,8 +3,6 @@
 // stanard build pipeline for spring boot microserfvice running in 
 // container platform
 
-import Util
-
 def call(boolean doScan = false, boolean doDeploy = false) {
 
 // for release branches, code scan will always be run, setting doScan = false has no effect
@@ -44,7 +42,7 @@ pipeline {
             // each environment will be defined as a kustomize overlay in source repo
             steps {
                 sh 'echo push image with tag ' + env.GIT_BRANCH 
-                sh 'echo push image with tag ' + Util.shortGitHash()
+                sh 'echo push image with tag ' + shortGitHash()
             }
         }
 
@@ -55,7 +53,7 @@ pipeline {
               }
             }
             steps {
-                sh 'echo kubectl -k k8s/overlays/' + Util.envForBranch()
+                sh 'echo kubectl -k k8s/overlays/' + envForBranch()
                 sh 'echo run bunch of integration test'
                 sh 'echo can also trigger a down stream job for testing'
             }
