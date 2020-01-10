@@ -69,6 +69,9 @@ pipeline {
 
 }
 
+def shortGitHash() {
+   return env.GIT_COMMIT[-8..-1]
+}
 
 def envForBranch(String branchName) {
    branch = env.GIT_BRANCH
