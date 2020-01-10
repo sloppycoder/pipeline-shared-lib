@@ -66,4 +66,4 @@ pipeline {
 
 
 @groovy.transform.Field
-def deployEnv = Util.envForBranch(env.GIT_BRANCH)
+def deployEnv = Util.envForBranch(build.getBuildVariables().get('GIT_BRANCH'))
