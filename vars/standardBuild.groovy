@@ -7,9 +7,7 @@ def call(boolean doScan = false, boolean doDeploy = false) {
 
 // for release branches, code scan will always be run, setting doScan = false has no effect
 // for develop branch, deploy will always be run, setting doDeploy = false has no effect
-shortHash = shortGitHash()
 deployEnv = envForBranch()
-System.out.println("*** " + shortHash + "****")
 System.out.println("*** " + deployEnv + "****")
 
 pipeline {
@@ -69,9 +67,6 @@ pipeline {
 
 }
 
-def shortGitHash() {
-   return env.GIT_COMMIT[-8..-1]
-}
 
 def envForBranch(String branchName) {
    branch = env.GIT_BRANCH
