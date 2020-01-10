@@ -20,7 +20,9 @@ pipeline {
 
         stage('code quality and security scan') {
             when{
-                branch 'release/*'
+              expression { 
+                return skipScan || env.GIT_BRANCH.startsWith('release/') 
+              }
             }
             steps {
                 sh 'echo sonar scan'
@@ -34,12 +36,16 @@ pipeline {
             }
         }
 
-        stage('deploy') {
+        stage('deploy and test') {
             when{
-                branch 'develop'
+              expression { 
+                return skipDeploy || env.GIT_BRANCH == 'develop' 
+              }
             }
             steps {
                 sh 'echo kubectl -k k8s/overlays/dev'
+                sh 'echo run bunch of integration test'
+                sh 'echo can also trigger a down stream job for testing'
             }
         }
        
