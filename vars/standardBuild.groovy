@@ -3,7 +3,12 @@
 // stanard build pipeline for spring boot microserfvice running in 
 // container platform
 
-def call(boolean skipScan = true, boolean skipDeploy = false) {
+import util
+
+def call(boolean doScan = false, boolean doDeploy = false) {
+
+// for release branches, code scan will always be run, setting doScan = false has no effect
+// for develop branch, deploy will always be run, setting doDeploy = false has no effect
 
 pipeline {
 
@@ -21,29 +26,36 @@ pipeline {
         stage('code quality and security scan') {
             when{
               expression { 
-                return skipScan || env.GIT_BRANCH.startsWith('release/') 
+                return env.GIT_BRANCH.startsWith('release/') || doScan
               }
             }
             steps {
-                sh 'echo sonar scan'
+                sh 'echo sonar scan 2'
             }
         }
         
         stage('push container image') {
+            // we always tag the container image with short version of git hash
+            // for image to source code tracibility 
+            // and the branch name
+            // later we'll just use a simple branch name to environment strategy 
+            // to determine what images gets deploy to which environment
+            // 
+            // each environment will be defined as a kustomize overlay in source repo
             steps {
-                sh 'echo push image'
-                sh 'echo podman push .... can use multiple tags'
+                sh 'echo push image with tag ' + env.GIT_BRANCH 
+                sh 'echo push image with tag ' + util.shortGitHash()
             }
         }
 
         stage('deploy and test') {
             when{
               expression { 
-                return skipDeploy || env.GIT_BRANCH == 'develop' 
+                return env.GIT_BRANCH == 'develop' || doDeploy
               }
             }
             steps {
-                sh 'echo kubectl -k k8s/overlays/dev'
+                sh 'echo kubectl -k k8s/overlays/' + Util.envForBranch(env.GIT_BRANCH)
                 sh 'echo run bunch of integration test'
                 sh 'echo can also trigger a down stream job for testing'
             }
@@ -54,3 +66,4 @@ pipeline {
 
 
 }
+
