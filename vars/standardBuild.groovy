@@ -64,4 +64,4 @@ pipeline {
 
 
 @groovy.transform.Field
-def deployEnv = env.GIT_BRANCH == 'develop') ? 'dev' : 'other'
+def deployEnv = env.GIT_BRANCH == 'develop' ? 'dev' : 'other'
