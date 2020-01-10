@@ -1,7 +1,6 @@
 class Util implements Serializable {
 
-  //@NonCPS
-  static def envForBranch(String branch) {
+ static def envForBranch(String branch) {
     if (branch == null || branch == '' ) {
       return 'emtpy'
     }
