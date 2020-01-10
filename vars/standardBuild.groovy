@@ -7,6 +7,8 @@ def call(boolean doScan = false, boolean doDeploy = false) {
 
 // for release branches, code scan will always be run, setting doScan = false has no effect
 // for develop branch, deploy will always be run, setting doDeploy = false has no effect
+shortHash = shortGitHash()
+deployEnv = envForBranch()
 
 pipeline {
 
@@ -42,7 +44,7 @@ pipeline {
             // each environment will be defined as a kustomize overlay in source repo
             steps {
                 sh 'echo push image with tag ' + env.GIT_BRANCH 
-                sh 'echo push image with tag ' + shortGitHash()
+                sh 'echo push image with tag ' + shortHash
             }
         }
 
@@ -53,7 +55,7 @@ pipeline {
               }
             }
             steps {
-                sh 'echo kubectl -k k8s/overlays/' + envForBranch()
+                sh 'echo kubectl -k k8s/overlays/' + deployEnv
                 sh 'echo run bunch of integration test'
                 sh 'echo can also trigger a down stream job for testing'
             }
