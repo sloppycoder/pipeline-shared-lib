@@ -66,3 +66,19 @@ pipeline {
 
 
 }
+
+
+def shortGitHash() {
+   return env.GIT_COMMIT.gitHash[-8..-1]
+}
+
+def envForBranch(String branchName) {
+   branch = env.GIT_BRANCH
+   if (branch == 'develop') {
+      return 'dev'
+   } else if (branch.startsWith('release/')) {
+      return 'sit'
+   } else {
+      return 'any'
+   }
+}
