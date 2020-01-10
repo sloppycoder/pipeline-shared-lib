@@ -1,7 +1,7 @@
-class Util {
+class Util implements Serializable {
 
-  def envForBranch(String branchName) {
-	   branch = build.getBuildVariables().get('GIT_BRANCH')
+  static def envForBranch(String branch) {
+    System.out.println(String.format("*** %s ***"), branch)
   	 if (branch == 'develop') {
   		  return 'dev'
   	 } else if (branch.startsWith('release/')) {

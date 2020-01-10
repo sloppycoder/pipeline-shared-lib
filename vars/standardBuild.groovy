@@ -3,6 +3,8 @@
 // stanard build pipeline for spring boot microserfvice running in 
 // container platform
 
+import Util
+
 def call(boolean doScan = false, boolean doDeploy = false) {
 
 pipeline {
@@ -64,4 +66,4 @@ pipeline {
 
 
 @groovy.transform.Field
-def deployEnv = env.GIT_BRANCH == 'develop' ? 'dev' : 'other'
+def deployEnv = Util.envForBranch(env.GIT_BRANCH)
