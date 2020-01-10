@@ -5,11 +5,6 @@
 
 def call(boolean doScan = false, boolean doDeploy = false) {
 
-// for release branches, code scan will always be run, setting doScan = false has no effect
-// for develop branch, deploy will always be run, setting doDeploy = false has no effect
-deployEnv = envForBranch()
-System.out.println("*** " + deployEnv + "****")
-
 pipeline {
 
     agent { label 'linux' }
@@ -65,16 +60,4 @@ pipeline {
 }
 
 
-}
-
-
-def envForBranch(String branchName) {
-   branch = env.GIT_BRANCH
-   if (branch == 'develop') {
-      return 'dev'
-   } else if (branch.startsWith('release/')) {
-      return 'sit'
-   } else {
-      return 'any'
-   }
 }
