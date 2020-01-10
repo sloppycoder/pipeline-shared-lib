@@ -3,7 +3,7 @@
 // stanard build pipeline for spring boot microserfvice running in 
 // container platform
 
-import util
+import Util
 
 def call(boolean doScan = false, boolean doDeploy = false) {
 
