@@ -5,7 +5,7 @@ def shortGitHash() {
 def envForBranch(string branchName) {
   	if (env.GIT_BRANCH == 'develop') {
   		return 'dev'
-  	} elif (branchName.startsWith('release/')) {
+  	} else if (branchName.startsWith('release/')) {
   		return 'sit'
   	} else {
   		return 'any'
