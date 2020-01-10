@@ -64,4 +64,4 @@ pipeline {
 
 
 @groovy.transform.Field
-def deployEnv = 'aaa'
+def deployEnv = env.GIT_COMMIT == 'develop' ? 'dev' : 'other'
