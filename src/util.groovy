@@ -3,7 +3,7 @@ def shortGitHash() {
 	return gitHash[-8..-1]
 }
 
-def envForBranch(string branchName) {
+def envForBranch(String branchName) {
 	branch = build.getBuildVariables().get('GIT_BRANCH')
   	if (branch == 'develop') {
   		return 'dev'
