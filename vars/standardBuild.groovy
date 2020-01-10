@@ -73,4 +73,4 @@ def deployEnv = {
     } else {
        return 'any'
     }
-}
+}()
