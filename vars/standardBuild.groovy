@@ -44,7 +44,7 @@ pipeline {
             // each environment will be defined as a kustomize overlay in source repo
             steps {
                 sh 'echo push image with tag ' + env.GIT_BRANCH 
-                sh 'echo push image with tag ' + util.shortGitHash()
+                sh 'echo push image with tag ' + shortGitHash()
             }
         }
 
@@ -55,7 +55,7 @@ pipeline {
               }
             }
             steps {
-                sh 'echo kubectl -k k8s/overlays/' + Util.envForBranch(env.GIT_BRANCH)
+                sh 'echo kubectl -k k8s/overlays/' + envForBranch()
                 sh 'echo run bunch of integration test'
                 sh 'echo can also trigger a down stream job for testing'
             }
@@ -67,3 +67,16 @@ pipeline {
 
 }
 
+def shortGitHash() {
+  return env.GIT_COMMIT[-8..-1]
+}
+
+def envForBranch() {
+    if (env.GIT_BRANCH == 'develop') {
+      return 'dev'
+    } else if (branchName.startsWith('release/')) {
+      return 'sit'
+    } else {
+      return 'any'
+    }
+}
