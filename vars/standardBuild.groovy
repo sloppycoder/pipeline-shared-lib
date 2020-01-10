@@ -52,7 +52,7 @@ pipeline {
               }
             }
             steps {
-                sh 'echo kubectl -k k8s/overlays/' + deployEnv
+                sh 'echo kubectl -k k8s/overlays/' + Util.envForBranch(env.GIT_BRANCH)
                 sh 'echo run bunch of integration test'
                 sh 'echo can also trigger a down stream job for testing'
             }
@@ -65,5 +65,5 @@ pipeline {
 }
 
 
-@groovy.transform.Field
-def deployEnv = Util.envForBranch(build.getBuildVariables().get('GIT_BRANCH'))
+// @groovy.transform.Field
+// def deployEnv = Util.envForBranch(build.getBuildVariables().get('GIT_BRANCH'))
