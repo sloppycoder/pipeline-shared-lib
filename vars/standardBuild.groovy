@@ -22,7 +22,9 @@ pipeline {
         stage('build and unit test') {
             steps {
                 sh 'env'
-                sh 'mvn clean test jib:buildTar -P jib'
+                // use flag to disable transfer progress which creates tons of 
+                // noise in Jenkins output
+                sh 'mvn clean test jib:buildTar --no-transfer-progress -P jib'
             }
         }
 
