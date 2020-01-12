@@ -11,12 +11,18 @@ pipeline {
 
     agent { label 'linux' }
 
+    // make sure the toos are configured properly
+    tools { 
+        jdk 'openjdk-11' 
+        maven 'maven-3.6.3' 
+    }
+
     stages {
 
         stage('build and unit test') {
             steps {
                 sh 'env'
-                sh 'echo mvn clean test jib:buildTar -P jib'
+                sh 'mvn clean test jib:buildTar -P jib'
             }
         }
 
@@ -41,7 +47,7 @@ pipeline {
             // 
             // each environment will be defined as a kustomize overlay in source repo
             steps {
-                sh 'echo push image with tag ' + env.GIT_BRANCH 
+                sh 'echo push image with tag ' + Util.tagForBranch(env.GIT_BRANCH)
                 sh 'echo push image with tag ' + env.GIT_COMMIT[-8..-1]
             }
         }
@@ -70,7 +76,6 @@ pipeline {
         }
        
     }
-}
-
+} // of pipeline
 
 }
