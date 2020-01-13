@@ -5,7 +5,7 @@
 
 import Util
 
-def call(boolean doScan = false, boolean doDeploy = false) {
+def call(boolean doDeploy = false) {
 
 pipeline {
 
@@ -17,43 +17,38 @@ pipeline {
         maven 'maven-3.6.3' 
     }
 
+    environment {
+        DEPLOY_ENV = Util.envForBranch(env.GIT_BRANCH)
+    }
+
     stages {
 
-        stage('build and unit test') {
+        stage('build, test and push') {
             steps {
                 sh 'env'
+                // this step will build image and push to image registry
                 // use flag to disable transfer progress which creates tons of 
                 // noise in Jenkins output
-                sh 'mvn clean test jib:buildTar --no-transfer-progress -P jib'
+                sh 'mvn clean compile jib:build --no-transfer-progress -D-Dpush.image.tag=' + DEPLOY_ENV + ' -P jib'
+
             }
         }
 
         stage('code scan') {
+            // do some scanning when code merge into develop branch
+            // we want to scan early so that developers can fix them early
+            // if performance is a concern we can make the scan faster by 
+            // using less rigorous profiles.
+            // we can later add one more rigorous scan in release branch
             when{
-              expression { 
-                return env.GIT_BRANCH.startsWith('release/') || doScan
-              }
+                branch { 'develop' }
             }
             steps {
-                sh 'echo sonar scan'
-                sh 'echo burpsuite scan'
+                sh 'echo quick sonar scan'
+                sh 'echo quick burpsuite scan'
             }
         }
         
-        stage('push container image') {
-            // we always tag the container image with short version of git hash
-            // for image to source code tracibility 
-            // and the branch name
-            // later we'll just use a simple branch name to environment strategy 
-            // to determine what images gets deploy to which environment
-            // 
-            // each environment will be defined as a kustomize overlay in source repo
-            steps {
-                sh 'echo push image with tag ' + Util.tagForBranch(env.GIT_BRANCH)
-                sh 'echo push image with tag ' + env.GIT_COMMIT[-8..-1]
-            }
-        }
-
         stage('deploy') {
             when{
               expression { 
@@ -61,7 +56,7 @@ pipeline {
               }
             }
             steps {
-                sh 'echo kubectl -k k8s/overlays/' + Util.envForBranch(env.GIT_BRANCH)
+                sh 'kustomize build ./k8s/overlays/' + DEPLOY_ENV + ' | kubectl apply -f -'
             }
         }
 
