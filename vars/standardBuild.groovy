@@ -41,7 +41,7 @@ pipeline {
             // using less rigorous profiles.
             // we can later add one more rigorous scan in release branch
             when{
-                branch { 'develop' }
+                branch  'develop'
             }
             steps {
                 sh 'echo quick sonar scan'
