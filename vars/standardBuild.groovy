@@ -23,13 +23,25 @@ pipeline {
 
     stages {
 
-        stage('build, test and push') {
+        stage('build and unit test') {
             steps {
                 sh 'env'
-                // this step will build image and push to image registry
                 // use flag to disable transfer progress which creates tons of 
                 // noise in Jenkins output
-                sh 'mvn clean compile jib:build --no-transfer-progress -D-Dpush.image.tag=' + DEPLOY_ENV + ' -P jib'
+                sh 'mvn test'
+
+            }
+        }
+
+        stage('push image') {
+            when{
+                expression {
+                    BRANCH_NAME ==~ /release\/feature\/.+|develop/
+                }
+            }
+            steps {
+                // this step will build image and push to image registry
+                sh 'mvn clean compile jib:build --no-transfer-progress -DskipTests -D-Dpush.image.tag=' + DEPLOY_ENV + ' -P jib'
 
             }
         }
@@ -41,7 +53,7 @@ pipeline {
             // using less rigorous profiles.
             // we can later add one more rigorous scan in release branch
             when{
-                branch  'develop'
+                branch  'release/*'
             }
             steps {
                 sh 'echo quick sonar scan'
@@ -52,7 +64,7 @@ pipeline {
         stage('deploy') {
             when{
               expression { 
-                return env.GIT_BRANCH == 'develop' || doDeploy
+                GIT_BRANCH == 'develop' || doDeploy
               }
             }
             steps {
@@ -63,7 +75,7 @@ pipeline {
         stage('integration test') {
             when{
               expression { 
-                return env.GIT_BRANCH == 'develop' || doDeploy
+                GIT_BRANCH == 'develop' || doDeploy
               }
             }
             steps {
