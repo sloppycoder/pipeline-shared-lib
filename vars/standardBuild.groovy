@@ -41,7 +41,7 @@ pipeline {
             }
             steps {
                 // this step will build image and push to image registry
-                sh 'mvn clean compile jib:build --no-transfer-progress -DskipTests -D-Dpush.image.tag=' + DEPLOY_ENV + ' -P jib'
+                sh 'mvn clean compile jib:build --no-transfer-progress -DskipTests -Dpush.image.base=localhost:8081/dev -Dpush.image.tag=' + DEPLOY_ENV + ' -P jib'
 
             }
         }
